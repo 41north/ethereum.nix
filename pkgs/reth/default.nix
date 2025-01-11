@@ -1,40 +1,25 @@
 {
-  darwin,
   fetchFromGitHub,
   lib,
   rustPlatform,
-  stdenv,
 }:
 rustPlatform.buildRustPackage rec {
   pname = "reth";
-  version = "0.2.0-beta.6";
+  version = "1.1.5";
 
   src = fetchFromGitHub {
     owner = "paradigmxyz";
     repo = pname;
     rev = "v${version}";
-    hash = "sha256-ZcQ29AwlTU6rDiknlJbOo8JubXQOJg1UVMSlRb1l8Yk=";
+    hash = "sha256-bQ45SJCdIEtBqhh/2bQh0CS8KC9eI4zF38LSL/LDOSk=";
   };
 
   cargoLock = {
     lockFile = "${src}/Cargo.lock";
-    outputHashes = {
-      "alloy-consensus-0.1.0" = "sha256-2TZeQo0d+Yp0M46VNx3OZoyDT4F31cLdOpl1tk3syfg=";
-      "discv5-0.4.1" = "sha256-agrluN1C9/pS/IMFTVlPOuYl3ZuklnTYb46duVvTPio=";
-      "revm-inspectors-0.1.0" = "sha256-ZRlYNEHD+wewlttUcMuEoTYg9Hn89JVAr7+hIeMBXog=";
-    };
   };
 
   nativeBuildInputs = [
     rustPlatform.bindgenHook
-  ];
-
-  # `x86_64-darwin` seems to have issues with jemalloc
-  buildNoDefaultFeatures = true;
-  buildFeatures = lib.optional (stdenv.system != "x86_64-darwin") "jemalloc";
-
-  buildInputs = lib.optionals stdenv.isDarwin [
-    darwin.apple_sdk.frameworks.Security
   ];
 
   # Some tests fail due to I/O that is unfriendly with nix sandbox.
@@ -51,6 +36,6 @@ rustPlatform.buildRustPackage rec {
     homepage = "https://github.com/paradigmxyz/reth";
     license = with licenses; [mit asl20];
     mainProgram = "reth";
-    platforms = ["aarch64-darwin" "x86_64-darwin" "aarch64-linux" "x86_64-linux"];
+    platforms = ["aarch64-linux" "x86_64-linux"];
   };
 }
